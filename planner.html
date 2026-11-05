@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Study Planner | Acadence{% endblock %}
+{% block heading %}Study Planner{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p>Review the tasks and subjects that may need your attention first.</p>
+</section>
+
+<article class="panel">
+    <div class="panel-heading">
+        <div>
+            <span class="eyebrow">RECOMMENDED FOCUS</span>
+            <h2>Your Study Priorities</h2>
+        </div>
+        <a class="text-link" href="{{ url_for('assignments') }}">Manage tasks →</a>
+    </div>
+
+    {% if priorities %}
+        <div class="priority-list">
+            {% for item in priorities %}
+                <div class="priority-item">
+                    <div>
+                        <strong>{{ item.title }}</strong>
+                        <p>{{ item.reason }}</p>
+                    </div>
+                    <span class="pill {% if item.level == 'High' %}red{% elif item.level == 'Medium' %}yellow{% else %}green{% endif %}">
+                        {{ item.level }} Priority
+                    </span>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <span>✦</span>
+            <p>No urgent priorities right now.</p>
+            <p>Keep adding your grades and assignments to receive recommendations.</p>
+        </div>
+    {% endif %}
+</article>
+
+<div class="tip-banner">
+    <span>✦</span>
+    <div>
+        <strong>Planning tip</strong>
+        <p>Start with overdue tasks, then prepare for upcoming deadlines and review subjects below the passing grade.</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Grades | Acadence{% endblock %}
+{% block heading %}Grade Tracker{% endblock %}
+{% block content %}
+<section class="page-intro">
+    <p>Set up only the assessments your subject uses. You can add scores now and update them as the semester continues.</p>
+    <p class="note">Incomplete scores are okay. Blank scores are simply skipped, and your estimate updates whenever you save. Only the grading categories you use need a weight; all category weights together must equal 100%. Passing mark: 75%.</p>
+</section>
+
+<section class="content-grid form-grid">
+    <article class="panel">
+        <div class="panel-heading"><div><span class="eyebrow">SUBJECT INFORMATION</span><h2>Add a Subject</h2><p class="note">Start with the subject name, then open only the sections you need.</p></div></div>
+        <form method="POST" class="form">
+            <input type="hidden" name="form_type" value="add">
+            <label>Subject name<input type="text" name="name" placeholder="e.g. Differential Calculus" value="{{ (form_data.get('name', '') if form_data.get('form_type') == 'add' else '') if form_data.get('form_type') == 'add' else '' }}" required></label>
+            <div class="two-column-fields">
+                <label>Number of quizzes<input type="number" name="quiz_count" min="0" max="50" value="{{ (form_data.get('quiz_count', '3') if form_data.get('form_type') == 'add' else '3') }}" required></label>
+                <label>Number of activities / other tasks<input type="number" name="activity_count" min="0" max="50" value="{{ (form_data.get('activity_count', '3') if form_data.get('form_type') == 'add' else '3') }}" required></label>
+                <label>Number of oral presentations<input type="number" name="oral_count" min="0" max="50" value="{{ (form_data.get('oral_count', '0') if form_data.get('form_type') == 'add' else '0') }}" required></label>
+                <label>Number of projects<input type="number" name="project_count" min="0" max="50" value="{{ (form_data.get('project_count', '0') if form_data.get('form_type') == 'add' else '0') }}" required></label>
+            </div>
+            <details class="grade-section"><summary>Assessment scores <span>Optional · enter what you have so far</span></summary>
+            <label>Quiz scores earned (comma-separated)<input type="text" name="quiz_scores" placeholder="e.g. 45, , 28" value="{{ (form_data.get('quiz_scores', '') if form_data.get('form_type') == 'add' else '') }}"></label>
+            <label>Quiz maximum points (comma-separated)<input type="text" name="quiz_max_scores" placeholder="e.g. 50, 40, 30" value="{{ (form_data.get('quiz_max_scores', '') if form_data.get('form_type') == 'add' else '100, 100, 100') }}"></label>
+            <label>Activity / other-task scores earned (comma-separated)<input type="text" name="activity_scores" placeholder="e.g. 55, , 40" value="{{ (form_data.get('activity_scores', '') if form_data.get('form_type') == 'add' else '') }}"></label>
+            <label>Activity / other-task maximum points (comma-separated)<input type="text" name="activity_max_scores" placeholder="e.g. 60, 40, 50" value="{{ (form_data.get('activity_max_scores', '') if form_data.get('form_type') == 'add' else '100, 100, 100') }}"></label>
+            <label>Oral presentation scores earned<input type="text" name="oral_scores" placeholder="e.g. 18, , 25" value="{{ (form_data.get('oral_scores', '') if form_data.get('form_type') == 'add' else '') }}"></label>
+            <label>Oral presentation maximum points<input type="text" name="oral_max_scores" placeholder="e.g. 20, 30, 30" value="{{ (form_data.get('oral_max_scores', '') if form_data.get('form_type') == 'add' else '') }}"></label>
+            <label>Project scores earned<input type="text" name="project_scores" placeholder="e.g. 85, , 90" value="{{ (form_data.get('project_scores', '') if form_data.get('form_type') == 'add' else '') }}"></label>
+            <label>Project maximum points<input type="text" name="project_max_scores" placeholder="e.g. 100, 100, 100" value="{{ (form_data.get('project_max_scores', '') if form_data.get('form_type') == 'add' else '') }}"></label>
+            </details>
+            <p class="note">Enter earned points and maximum points in the same order. Example: 45, , 28 means the second quiz has not been taken yet. Leave a score blank until you receive it. If there are no quizzes or activities, set that count to 0.</p>
+            <details class="grade-section"><summary>Exams <span>Optional · leave untaken exams blank</span></summary>
+            <h3>Examination Scores</h3>
+            <div class="two-column-fields">
+                <label>Preliminary points earned<input type="number" name="prelim_score" min="0" step="0.01" value="{{ (form_data.get('prelim_score', '') if form_data.get('form_type') == 'add' else '') }}" placeholder="Leave blank if not taken yet"></label>
+                <label>Preliminary maximum points<input type="number" name="prelim_max_score" min="0.01" step="0.01" value="{{ (form_data.get('prelim_max_score', '100') if form_data.get('form_type') == 'add' else '100') }}" required></label>
+                <label>Midterm points earned<input type="number" name="midterm_score" min="0" step="0.01" value="{{ (form_data.get('midterm_score', '') if form_data.get('form_type') == 'add' else '') }}" placeholder="Leave blank if not taken yet"></label>
+                <label>Midterm maximum points<input type="number" name="midterm_max_score" min="0.01" step="0.01" value="{{ (form_data.get('midterm_max_score', '100') if form_data.get('form_type') == 'add' else '100') }}" required></label>
+                <label>Final points earned<input type="number" name="final_score" min="0" step="0.01" value="{{ (form_data.get('final_score', '') if form_data.get('form_type') == 'add' else '') }}" placeholder="Leave blank if not taken yet"></label>
+                <label>Final maximum points<input type="number" name="final_max_score" min="0.01" step="0.01" value="{{ (form_data.get('final_max_score', '100') if form_data.get('form_type') == 'add' else '100') }}" required></label>
+            </div>
+            </details>
+            <details class="grade-section"><summary>Grade weights <span>Must add up to 100%</span></summary>
+            <h3>Grading Percentages</h3>
+            <p class="note">Enter 0% for any category not used in this subject. All remaining percentages must total 100%.</p>
+            <div class="two-column-fields">
+                <label>Quizzes (%)<input type="number" name="quiz_weight" min="0" max="100" step="0.01" value="{{ (form_data.get('quiz_weight', '20') if form_data.get('form_type') == 'add' else '20') }}" required></label>
+                <label>Activities / other tasks (%)<input type="number" name="activity_weight" min="0" max="100" step="0.01" value="{{ (form_data.get('activity_weight', '20') if form_data.get('form_type') == 'add' else '20') }}" required></label>
+                <label>Oral presentations (%)<input type="number" name="oral_weight" min="0" max="100" step="0.01" value="{{ (form_data.get('oral_weight', '0') if form_data.get('form_type') == 'add' else '0') }}" required></label>
+                <label>Projects (%)<input type="number" name="project_weight" min="0" max="100" step="0.01" value="{{ (form_data.get('project_weight', '0') if form_data.get('form_type') == 'add' else '0') }}" required></label>
+                <label>Prelim (%)<input type="number" name="prelim_weight" min="0" max="100" step="0.01" value="{{ (form_data.get('prelim_weight', '20') if form_data.get('form_type') == 'add' else '20') }}" required></label>
+                <label>Midterm (%)<input type="number" name="midterm_weight" min="0" max="100" step="0.01" value="{{ (form_data.get('midterm_weight', '20') if form_data.get('form_type') == 'add' else '20') }}" required></label>
+                <label>Final (%)<input type="number" name="final_weight" min="0" max="100" step="0.01" value="{{ (form_data.get('final_weight', '20') if form_data.get('form_type') == 'add' else '20') }}" required></label>
+            </div>
+            </details>
+            <button class="button" type="submit">Save Subject</button>
+        </form>
+    </article>
+
+    <article class="panel">
+        <div class="panel-heading"><div><span class="eyebrow">ACADEMIC PERFORMANCE</span><h2>Your Subjects</h2></div></div>
+        {% if subjects %}
+            <div class="grade-list">
+                {% for subject in subjects %}
+                    <div class="grade-card">
+                        <div class="grade-top"><div><strong>{{ subject.name }}</strong><span class="small-status {% if not subject.has_scores %}blue{% elif subject.grade < 75 %}red{% else %}green{% endif %}">{{ subject.standing }}</span></div>{% if subject.has_scores %}<strong class="grade-number">{{ "%.2f"|format(subject.grade) }}%</strong>{% else %}<strong class="grade-number">—</strong>{% endif %}</div>
+                        <p class="note">{% if subject.has_scores %}Estimated grade based on assessments with scores entered so far. Assessments not yet taken are temporarily excluded, and the remaining category weights are rebalanced.{% else %}No scores entered yet. Add scores as you receive them to see an estimate.{% endif %}</p>
+                        <p class="note">Quizzes: {{ subject.quiz_count }} · Activities: {{ subject.activity_count }} · Oral presentations: {{ subject.oral_count }} · Projects: {{ subject.project_count }}</p>
+                        <div class="grade-breakdown">
+                            <span>Quiz: {% if subject.quiz_weight > 0 %}{{ subject.quiz_weight }}%{% else %}Not included{% endif %}</span>
+                            <span>Activities: {% if subject.activity_weight > 0 %}{{ subject.activity_weight }}%{% else %}Not included{% endif %}</span>
+                            <span>Oral presentations: {% if subject.oral_weight > 0 %}{{ subject.oral_weight }}%{% else %}Not included{% endif %}</span>
+                            <span>Projects: {% if subject.project_weight > 0 %}{{ subject.project_weight }}%{% else %}Not included{% endif %}</span>
+                            <span>Prelim: {% if subject.prelim_weight > 0 %}{{ subject.prelim_weight }}%{% else %}Not included{% endif %}</span>
+                            <span>Midterm: {% if subject.midterm_weight > 0 %}{{ subject.midterm_weight }}%{% else %}Not included{% endif %}</span>
+                            <span>Final: {% if subject.final_weight > 0 %}{{ subject.final_weight }}%{% else %}Not included{% endif %}</span>
+                        </div>
+                        {% if subject.has_scores %}<div class="progress-track"><div class="progress-fill {% if subject.grade < 75 %}red{% else %}green{% endif %}" style="width: {{ [subject.grade, 100]|min }}%"></div></div>{% endif %}
+                        <details class="edit-subject"><summary>Edit subject details and scores</summary>
+                            <form method="POST" class="form edit-form">
+                                <input type="hidden" name="form_type" value="edit">
+                                <input type="hidden" name="name" value="{{ subject.name }}">
+                                <div class="two-column-fields">
+                                    <label>Number of quizzes<input type="number" name="quiz_count" min="0" max="50" value="{{ form_data.get('quiz_count', subject.quiz_count) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.quiz_count }}" required></label>
+                                    <label>Number of activities / other tasks<input type="number" name="activity_count" min="0" max="50" value="{{ form_data.get('activity_count', subject.activity_count) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.activity_count }}" required></label>
+                                    <label>Number of oral presentations<input type="number" name="oral_count" min="0" max="50" value="{{ form_data.get('oral_count', subject.oral_count) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.oral_count }}" required></label>
+                                    <label>Number of projects<input type="number" name="project_count" min="0" max="50" value="{{ form_data.get('project_count', subject.project_count) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.project_count }}" required></label>
+                                </div>
+                                <label>Quiz scores earned<input type="text" name="quiz_scores" value="{{ form_data.get('quiz_scores', subject.quiz_scores) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.quiz_scores }}"></label>
+                                <label>Quiz maximum points<input type="text" name="quiz_max_scores" value="{{ form_data.get('quiz_max_scores', subject.quiz_max_scores) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.quiz_max_scores }}"></label>
+                                <label>Activity / other-task scores earned<input type="text" name="activity_scores" value="{{ form_data.get('activity_scores', subject.activity_scores) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.activity_scores }}"></label>
+                                <label>Activity / other-task maximum points<input type="text" name="activity_max_scores" value="{{ form_data.get('activity_max_scores', subject.activity_max_scores) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.activity_max_scores }}"></label>
+                                <label>Oral presentation scores earned<input type="text" name="oral_scores" value="{{ form_data.get('oral_scores', subject.oral_scores) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.oral_scores }}"></label>
+                                <label>Oral presentation maximum points<input type="text" name="oral_max_scores" value="{{ form_data.get('oral_max_scores', subject.oral_max_scores) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.oral_max_scores }}"></label>
+                                <label>Project scores earned<input type="text" name="project_scores" value="{{ form_data.get('project_scores', subject.project_scores) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.project_scores }}"></label>
+                                <label>Project maximum points<input type="text" name="project_max_scores" value="{{ form_data.get('project_max_scores', subject.project_max_scores) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.project_max_scores }}"></label>
+                                <p class="note">You can save partial scores. Leave untaken assessments blank; missing maximum points default to 100. You can add more scores later.</p>
+                                <div class="two-column-fields">
+                                    <label>Preliminary points earned<input type="number" name="prelim_score" min="0" step="0.01" value="{% if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name %}{{ form_data.get('prelim_score', '') }}{% elif subject.prelim_score >= 0 %}{{ subject.prelim_score }}{% endif %}" placeholder="Not taken yet"></label>
+                                    <label>Preliminary maximum points<input type="number" name="prelim_max_score" min="0.01" step="0.01" value="{{ form_data.get('prelim_max_score', subject.prelim_max_score) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.prelim_max_score }}" required></label>
+                                    <label>Midterm points earned<input type="number" name="midterm_score" min="0" step="0.01" value="{% if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name %}{{ form_data.get('midterm_score', '') }}{% elif subject.midterm_score >= 0 %}{{ subject.midterm_score }}{% endif %}" placeholder="Not taken yet"></label>
+                                    <label>Midterm maximum points<input type="number" name="midterm_max_score" min="0.01" step="0.01" value="{{ form_data.get('midterm_max_score', subject.midterm_max_score) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.midterm_max_score }}" required></label>
+                                    <label>Final points earned<input type="number" name="final_score" min="0" step="0.01" value="{% if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name %}{{ form_data.get('final_score', '') }}{% elif subject.final_score >= 0 %}{{ subject.final_score }}{% endif %}" placeholder="Not taken yet"></label>
+                                    <label>Final maximum points<input type="number" name="final_max_score" min="0.01" step="0.01" value="{{ form_data.get('final_max_score', subject.final_max_score) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.final_max_score }}" required></label>
+                                </div>
+                                <h3>Grading Percentages</h3>
+                                <p class="note">Change an unused category to 0%. The other percentages must add up to 100%.</p>
+                                <div class="two-column-fields">
+                                    <label>Quizzes (%)<input type="number" name="quiz_weight" min="0" max="100" step="0.01" value="{{ form_data.get('quiz_weight', subject.quiz_weight) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.quiz_weight }}" required></label>
+                                    <label>Activities / other tasks (%)<input type="number" name="activity_weight" min="0" max="100" step="0.01" value="{{ form_data.get('activity_weight', subject.activity_weight) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.activity_weight }}" required></label>
+                                    <label>Oral presentations (%)<input type="number" name="oral_weight" min="0" max="100" step="0.01" value="{{ form_data.get('oral_weight', subject.oral_weight) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.oral_weight }}" required></label>
+                                    <label>Projects (%)<input type="number" name="project_weight" min="0" max="100" step="0.01" value="{{ form_data.get('project_weight', subject.project_weight) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.project_weight }}" required></label>
+                                    <label>Prelim (%)<input type="number" name="prelim_weight" min="0" max="100" step="0.01" value="{{ form_data.get('prelim_weight', subject.prelim_weight) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.prelim_weight }}" required></label>
+                                    <label>Midterm (%)<input type="number" name="midterm_weight" min="0" max="100" step="0.01" value="{{ form_data.get('midterm_weight', subject.midterm_weight) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.midterm_weight }}" required></label>
+                                    <label>Final (%)<input type="number" name="final_weight" min="0" max="100" step="0.01" value="{{ form_data.get('final_weight', subject.final_weight) if form_data.get('form_type') == 'edit' and form_data.get('name') == subject.name else subject.final_weight }}" required></label>
+                                </div>
+                                <button class="button" type="submit">Update Subject</button>
+                            </form>
+                        </details>
+                        {% if subject.has_scores and subject.grade < 75 %}<p class="warning-text">Your current estimated grade is below the passing mark. Prioritize reviewing this subject.</p>{% endif %}
+                        <form method="POST" action="{{ url_for('delete_subject', subject_id=subject.id) }}" onsubmit="return confirm('Delete this subject? Its assignments will remain.');"><button class="text-button" type="submit">Delete subject</button></form>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}<div class="empty-state"><span>▤</span><p>No grades entered yet.</p></div>{% endif %}
+    </article>
+</section>
+{% endblock %}
