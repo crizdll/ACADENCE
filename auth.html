@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Create Account' if mode == 'register' else 'Log In' }} | Acadence{% endblock %}
+{% block heading %}{{ 'Create your account' if mode == 'register' else 'Welcome back' }}{% endblock %}
+{% block content %}
+<section class="auth-wrap"><article class="panel auth-panel">
+    <span class="eyebrow">YOUR ACADEMIC SPACE</span>
+    <h2>{{ 'Get started with Acadence' if mode == 'register' else 'Log in to Acadence' }}</h2>
+    <p class="note">{{ 'Create an account to keep your subjects, grades, and assignments saved separately.' if mode == 'register' else 'Enter your account details to access your academic organizer.' }}</p>
+    <form method="POST" class="form">
+        <label>Username<input type="text" name="username" minlength="3" value="{{ form_data.get('username', '') }}" required autocomplete="username"></label>
+        <label>Password<input type="password" name="password" minlength="8" required autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}"></label>
+        {% if mode == 'register' %}<label>Confirm password<input type="password" name="confirm_password" minlength="8" required autocomplete="new-password"></label>{% endif %}
+        <button class="button" type="submit">{{ 'Create Account' if mode == 'register' else 'Log In' }}</button>
+    </form>
+    <p class="auth-switch">{% if mode == 'register' %}Already have an account? <a href="{{ url_for('login') }}">Log in</a>{% else %}New to Acadence? <a href="{{ url_for('register') }}">Create an account</a>{% endif %}</p>
+</article></section>
+{% endblock %}

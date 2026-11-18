@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Assignments | Acadence{% endblock %}
+{% block heading %}Assignment Tracker{% endblock %}
+
+{% block content %}
+<section class="page-intro">
+    <p>Keep track of activities, projects, and submission deadlines.</p>
+</section>
+
+<section class="content-grid form-grid">
+    <article class="panel">
+        <div class="panel-heading">
+            <div>
+                <span class="eyebrow">NEW TASK</span>
+                <h2>Add Assignment</h2>
+            </div>
+        </div>
+
+        <form method="POST" class="form">
+            <label>Assignment title
+                <input type="text" name="title" placeholder="e.g. Programming Activity 1" value="{{ form_data.get('title', '') }}" required>
+            </label>
+
+            <label>Subject
+                <select name="subject_id">
+                    <option value="">Choose a subject (optional)</option>
+                    {% for subject in subjects %}
+                        <option value="{{ subject.id }}" {% if form_data.get('subject_id') == subject.id|string %}selected{% endif %}>{{ subject.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label>Due date
+                <input type="date" name="due_date" value="{{ form_data.get('due_date', '') }}" required>
+            </label>
+
+            <label>Description
+                <textarea name="description" rows="3" placeholder="Add notes or instructions...">{{ form_data.get('description', '') }}</textarea>
+            </label>
+
+            <button class="button" type="submit">+ Add Assignment</button>
+        </form>
+    </article>
+
+    <article class="panel">
+        <div class="panel-heading">
+            <div>
+                <span class="eyebrow">YOUR WORKLOAD</span>
+                <h2>Assignment List</h2>
+            </div>
+        </div>
+
+        {% if assignments %}
+            <div class="task-list">
+                {% for task in assignments %}
+                    <div class="assignment-item">
+                        <div class="task-info">
+                            <strong>{{ task.title }}</strong>
+                            <span>{{ task.subject_name }} · Due {{ task.due_date }}</span>
+                            {% if task.description %}
+                                <p class="description">{{ task.description }}</p>
+                            {% endif %}
+                            <span class="pill {{ task.color }}">{{ task.deadline_label }}</span>
+                        </div>
+                        <div class="action-buttons">
+                            {% if task.status != "Completed" %}
+                                <form method="POST" action="{{ url_for('complete_assignment', assignment_id=task.id) }}">
+                                    <button class="button small secondary" type="submit">Complete</button>
+                                </form>
+                            {% endif %}
+                            <form method="POST" action="{{ url_for('delete_assignment', assignment_id=task.id) }}" onsubmit="return confirm('Delete this assignment?');">
+                                <button class="button small danger-button" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <span>☷</span>
+                <p>Your assignment list is empty.</p>
+            </div>
+        {% endif %}
+    </article>
+</section>
+{% endblock %}

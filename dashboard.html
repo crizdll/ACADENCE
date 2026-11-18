@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Acadence{% endblock %}
+{% block heading %}My Dashboard{% endblock %}
+
+{% block content %}
+<section class="welcome">
+    <div>
+        <span class="eyebrow light">WELCOME TO YOUR ACADEMIC SPACE</span>
+        <h2>Make every study session count.</h2>
+        <p>Keep your assignments organized and your academic goals in sight.</p>
+    </div>
+    <div class="welcome-symbol">✦</div>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <span class="stat-icon purple">☷</span>
+        <p>Pending Tasks</p>
+        <h2>{{ pending_count }}</h2>
+    </article>
+    <article class="stat-card">
+        <span class="stat-icon green">✓</span>
+        <p>Completed Tasks</p>
+        <h2>{{ completed_count }}</h2>
+    </article>
+    <article class="stat-card">
+        <span class="stat-icon blue">▤</span>
+        <p>Subjects</p>
+        <h2>{{ subjects|length }}</h2>
+    </article>
+    <article class="stat-card">
+        <span class="stat-icon red">!</span>
+        <p>Subjects At Risk</p>
+        <h2>{{ warning_count }}</h2>
+    </article>
+</section>
+
+<section class="content-grid">
+    <article class="panel">
+        <div class="panel-heading">
+            <div>
+                <span class="eyebrow">STAY ORGANIZED</span>
+                <h2>Upcoming Assignments</h2>
+            </div>
+            <a class="text-link" href="{{ url_for('assignments') }}">View all →</a>
+        </div>
+
+        {% if assignments %}
+            <div class="task-list">
+                {% for task in assignments %}
+                    <div class="task-row">
+                        <div class="task-mark {{ task.color }}"></div>
+                        <div class="task-info">
+                            <strong>{{ task.title }}</strong>
+                            <span>{{ task.subject_name }} · {{ task.due_date }}</span>
+                        </div>
+                        <span class="pill {{ task.color }}">{{ task.deadline_label }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <span>☷</span>
+                <p>No assignments yet.</p>
+                <a class="button small" href="{{ url_for('assignments') }}">Add an assignment</a>
+            </div>
+        {% endif %}
+    </article>
+
+    <article class="panel">
+        <div class="panel-heading">
+            <div>
+                <span class="eyebrow">GRADE OVERVIEW</span>
+                <h2>Subject Performance</h2>
+            </div>
+            <a class="text-link" href="{{ url_for('grades') }}">Manage →</a>
+        </div>
+
+        {% if subjects %}
+            {% for subject in subjects %}
+                <div class="subject-progress">
+                    <div class="progress-heading">
+                        <strong>{{ subject.name }}</strong>
+                        <span>{% if subject.has_scores %}{{ "%.2f"|format(subject.grade) }}%{% else %}—{% endif %}</span>
+                    </div>
+                    {% if subject.has_scores %}<div class="progress-track">
+                        <div class="progress-fill {{ subject.color }}" style="width: {{ [subject.grade, 100]|min }}%"></div>
+                    </div>{% endif %}
+                    <span class="small-status {{ subject.color }}">{{ subject.standing }}{% if subject.has_scores %} · Estimated{% endif %}</span>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <span>▤</span>
+                <p>No subjects or grades entered yet.</p>
+                <a class="button small" href="{{ url_for('grades') }}">Add a subject</a>
+            </div>
+        {% endif %}
+    </article>
+</section>
+
+<section class="tip-banner">
+    <span>✦</span>
+    <div>
+        <strong>Your next step starts today.</strong>
+        <p>Check your deadlines and give extra attention to subjects marked At Risk.</p>
+    </div>
+    <a href="{{ url_for('planner') }}">See priorities →</a>
+</section>
+{% endblock %}
